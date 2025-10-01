@@ -19,7 +19,12 @@ const PhotoToArt = () => {
   const isDisabled = loading || uploadImg.length === 0
   const handleGenerate = async () => {
     if (uploadImg.length === 0) return
+    if (!prompt) {
+      setErrMsg("You have to add Additional Details to generate gihibli art")
+      return
+    }
     setLoading(true)
+    setErrMsg(null)
 
     const formData = new FormData()
     formData.append("image", uploadImg[0])
@@ -89,6 +94,17 @@ const PhotoToArt = () => {
     accept: { 'image/*': []},
     multiple: true,
   })
+
+  useEffect(() => {
+    if (!errMsg) return
+    const timer = setTimeout(() => {
+      setErrMsg(null)
+      setPreviewUrl(null)
+      setUploadImg([])
+    }, 5000)
+
+    return () => clearTimeout(timer)
+  }, [errMsg])
 
 
   return (
@@ -163,11 +179,15 @@ const PhotoToArt = () => {
             </div>
           }
         </div>
-        <div className="mb-1 font-semibold pl-1">Additional Details</div>
-        <div className="w-full h-16 border border-gray-200 rounded-xl">
-          <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)}
-            className='w-full h-16 border-none focus-visible:ring-0 focus:outline-none p-2 text-md' placeholder='Add any specific details or enhancements'></textarea>
-        </div>
+        {errMsg ? <div className='text-md text-pink-600 justify-start my-5'>{errMsg}</div> :
+          <>
+            <div className="mb-1 font-semibold pl-1">Additional Details</div>
+            <div className="w-full h-16 border border-gray-200 rounded-xl">
+              <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)}
+                className='w-full h-16 border-none focus-visible:ring-0 focus:outline-none p-2 text-md' placeholder='Add any specific details or enhancements'></textarea>
+            </div>
+          </>
+        }
           
         <button onClick={handleGenerate} disabled={isDisabled} className="w-full h-11 text-lg font-light flex justify-center items-center rounded-xl bg-pink-700 text-white cursor-pointer shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed">
           {loading ? "Generating... " : "Transform to Ghibli Art"}
