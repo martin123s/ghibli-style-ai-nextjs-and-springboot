@@ -1,0 +1,16 @@
+# Node.js / Next.js
+node_modules
+.next
+.env
+.DS_Store
+.vscode
+
+# Java / Spring Boot
+target
+*.log
+.idea
+*.iml
+
+
+# OS / misc
+Thumbs.db
